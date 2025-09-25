@@ -1,0 +1,11 @@
+@EndUserText.label: 'Access Control for Consumtion View'
+@MappingRole: true
+define role Z17_C_Travel {
+    grant
+        select
+            on
+                Z17_C_TRAVEL
+                    where
+                        inheriting conditions from entity z17_r_travel;
+                        
+}

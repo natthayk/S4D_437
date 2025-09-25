@@ -1,0 +1,80 @@
+@Metadata.layer: #CORE
+@Search.searchable: true
+@UI.headerInfo: { typeName: 'Flight Travel',
+                  typeNamePlural: 'Flight Travels',
+                  title.value: 'Description',
+                  description.value: 'Description' }
+
+annotate entity Z17_C_TRAVEL with
+
+{
+  @Consumption.valueHelpDefinition: [ { entity: { name: '/DMO/I_Agency', element: 'AgencyID' }
+//                                        ,useForValidation: true
+                                      }
+                                    ]
+   @UI.facet: [ { id:            'Travel',
+                    purpose:       #STANDARD,
+                    type:          #IDENTIFICATION_REFERENCE,
+                    label:         'Travel',
+                    position:      10 }
+                 ,
+                 { id:            'TravelItem',
+                    purpose:       #STANDARD,
+                    type:          #LINEITEM_REFERENCE,
+                    targetElement: '_TravelItem',
+                    label:         'Travel Items',
+                    position:      20 }
+
+               ]
+               
+  @UI.identification: [ { position: 10, importance: #LOW } ]
+  @UI.lineItem: [ { position: 10, importance: #HIGH } ]
+  AgencyId;
+
+  @UI.identification: [ { position: 20, importance: #HIGH } ]
+  @UI.lineItem: [ { position: 15, importance: #HIGH } ]
+  @UI.selectionField: [ { position: 10 } ]
+  TravelId;
+
+  @UI.identification: [ { position: 30, importance: #HIGH } ]
+  @UI.lineItem: [ { position: 20, importance: #HIGH } ]
+
+  Description;
+
+  @Consumption.valueHelpDefinition: [ { entity: { name: '/DMO/I_Customer_StdVH', element: 'CustomerID' } } ]
+  @Search.defaultSearchElement: true
+  @UI.identification: [ { position: 40, importance: #MEDIUM } ]
+  @UI.lineItem: [ { position: 30, importance: #MEDIUM } ]
+  @UI.selectionField: [ { position: 20 } ]
+  CustomerId;
+
+  @UI.identification: [ { position: 50, importance: #MEDIUM } ]
+  @UI.lineItem: [ { position: 40, importance: #MEDIUM } ]
+
+  BeginDate;
+
+  @UI.identification: [ { position: 60, importance: #LOW } ]
+  @UI.lineItem: [ { position: 50, importance: #LOW } ]
+  EndDate;
+
+  @UI.identification: [ { position: 65, importance: #LOW ,label: 'Duration'} ]
+  @UI.lineItem: [ { position: 35, importance: #LOW } ]
+  Duration;
+
+  @UI.identification: [ { position: 70, importance: #HIGH },
+                        { type: #FOR_ACTION, dataAction: 'cancel_travel', label: 'Cancel the Travel' } ]
+  @UI.lineItem: [ { position: 70, importance: #HIGH },
+                  { type: #FOR_ACTION, dataAction: 'cancel_travel', label: 'Cancel the Travel' } ]
+  Status;
+
+  @UI.hidden: true
+  ChangedAt;
+
+  @UI.hidden: true
+  ChangedBy;
+
+  @UI.hidden: true
+  LocChangedAt;
+
+
+}

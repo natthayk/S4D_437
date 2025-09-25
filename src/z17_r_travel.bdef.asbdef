@@ -1,0 +1,154 @@
+managed implementation in class zbp_17_r_travel unique;
+strict ( 2 );
+with draft;
+
+define behavior for z17_r_travel alias Travel
+persistent table z17_travel ##UNMAPPED_FIELD
+draft table z17_travel_d
+lock master
+total etag LocChangedAt
+authorization master ( instance )
+etag master LocChangedAt
+early numbering
+{
+  create ( authorization : global, features : global );
+  update ( features : instance );
+  delete ( features : instance );
+
+  association _TravelItem { create; with draft;}
+
+  draft action Resume;
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft determine action Prepare
+  {
+    validation validateDescription;
+    validation validateCustomer;
+    validation validateBeginDate;
+    validation validateEndDate;
+  }
+
+
+  field ( readonly )
+  AgencyId,
+  TravelId;
+
+  field ( readonly )
+  Duration,
+  Status,
+  ChangedAt,
+  ChangedBy,
+  LocChangedAt;
+
+  field ( mandatory )
+  Description,
+  CustomerId,
+  BeginDate,
+  EndDate;
+
+  //  action cancel_travel;
+  action ( features : instance ) cancel_travel result [1] $self;
+
+  //  event TravelCreated;
+  event TravelCreated parameter z17_A_Event;
+
+  validation validateDescription on save
+  { create;
+    field Description;
+  }
+
+  validation validateCustomer on save
+  { create;
+    field CustomerId;
+  }
+
+
+  validation validateBeginDate on save
+  { create;
+    field BeginDate;
+  }
+
+  validation validateEndDate on save
+  { create;
+    field EndDate;
+  }
+
+  validation validateDateSequence on save
+  { create;
+    field BeginDate, EndDate;
+  }
+
+  determination determineStatus on modify
+  { create;
+  }
+
+  determination determineDuration on save
+  { field BeginDate, EndDate;
+  }
+
+  determine action checkCustomer
+  {
+    validation validateCustomer;
+  }
+
+  determine action adjustDuration
+  {
+    validation validateBeginDate;
+    validation validateEnddate;
+    validation validateDateSequence;
+
+    determination determineDuration;
+  }
+
+
+  mapping for z17_travel corresponding
+    {
+      AgencyID     = agency_ID;
+      TravelID     = travel_id;
+      CustomerID   = customer_id;
+      BeginDate    = begin_date;
+      EndDate      = end_date;
+      ChangedAt    = changed_at;
+      ChangedBy    = changed_by;
+      LocChangedAt = loc_changed_at;
+    }
+}
+
+define behavior for Z17_R_TRAVELITEM alias Item
+persistent table z17_tritem
+//with unmanaged save
+with additional save
+draft table z17_travelitem_d
+lock dependent by _Travel
+authorization dependent by _Travel
+etag master LocChangedAt
+{
+  update;
+  delete;
+  field ( readonly, numbering : managed ) ItemUuid;
+
+  field ( readonly )
+  AgencyId,
+  TravelId;
+
+  association _Travel{ with draft;}
+
+
+//  mapping for z17_tritem corresponding //Work ->with additional save
+  mapping for z17_s_tritem control z17_s_tritemx corresponding
+    {
+      ItemUuid           = item_uuid;
+      AgencyId           = agency_id;
+      TravelId           = travel_id;
+      CarrierId          = carrier_id;
+      ConnectionId       = connection_id;
+      FlightDate         = flight_date;
+      BookingId          = booking_id;
+      PassengerFirstName = passenger_first_name;
+      PassengerLastName  = passenger_last_name;
+      ChangedAt          = changed_at;
+      ChangedBy          = changed_by;
+      LocChangedAt       = loc_changed_at;
+    }
+}

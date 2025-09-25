@@ -1,0 +1,5 @@
+@EndUserText.label: 'd'
+define service Z17_UI_TRAVEL_O2 {
+  expose Z17_C_TRAVEL;
+  expose Z17_C_TRAVELITEM;
+}
